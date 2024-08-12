@@ -21,12 +21,13 @@ _CREATE_COUNTER = "config dropcounters install {} {} {}"
 _DELETE_COUNTER = "config dropcounters delete {}"
 
 
-def get_device_capabilities(dut):
+def get_device_capabilities(dut, asic_index):
     """
     Fetch the drop counter capabilities for the given device.
 
     Args:
         dut (SonicHost): The device to query for drop counter capabilities.
+        asic_index (int): The ASIC index to query for drop counter capabilities if it's a multi-asic device.
 
     Returns:
         A Dictionary containing 1) A Dictionary that maps from supported counter types to the
@@ -40,7 +41,10 @@ def get_device_capabilities(dut):
 
     """
 
-    output = dut.command(_SHOW_CAPABILITIES)
+    if not dut.is_multi_asic:
+        output = dut.command(_SHOW_CAPABILITIES)
+    else:
+        output = dut.command("ip netns exec asic{} {}".format(asic_index, _SHOW_CAPABILITIES))
 
     if output["rc"] == 2:
         return {"counters": {}, "reasons": {}}

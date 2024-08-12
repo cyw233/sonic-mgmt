@@ -295,7 +295,7 @@ def testbed_params(duthosts, rand_one_dut_hostname, tbinfo):
     """
     duthost = duthosts[rand_one_dut_hostname]
     if tbinfo["topo"]["type"] != "t0":
-        pytest.skip("Unsupported topology {}".format(tbinfo["topo"]["name"]))
+        pytest.skip("Unsupported topology {} of type {}".format(tbinfo["topo"]["name"], tbinfo["topo"]["type"]))
 
     mgFacts = duthost.get_extended_minigraph_facts(tbinfo)
 
@@ -317,7 +317,7 @@ def testbed_params(duthosts, rand_one_dut_hostname, tbinfo):
 
 
 @pytest.fixture(scope="module")
-def device_capabilities(duthosts, rand_one_dut_hostname):
+def device_capabilities(duthosts, rand_one_dut_hostname, enum_rand_one_asic_index):
     """
     Gather information about the DUT's drop counter capabilities.
 
@@ -327,7 +327,7 @@ def device_capabilities(duthosts, rand_one_dut_hostname):
 
     """
     duthost = duthosts[rand_one_dut_hostname]
-    capabilities = cdc.get_device_capabilities(duthost)
+    capabilities = cdc.get_device_capabilities(duthost, enum_rand_one_asic_index)
 
     pytest_assert(capabilities, "Error fetching device capabilities")
 
