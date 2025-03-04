@@ -353,10 +353,13 @@ def get_tbinfo(request):
 
 
 @pytest.fixture(scope="session")
-def tbinfo(request):
+def tbinfo(request, my_localhost):
     """
     Create and return testbed information
     """
+    base_path = os.path.dirname(os.path.realpath(__file__))
+    lab_conn_graph_path = os.path.join(base_path, "../ansible/files/")
+    xx = my_localhost.conn_graph_facts(hosts=["dut-1", "dut-2"], filepath=lab_conn_graph_path)["ansible_facts"]
     _, testbedinfo = get_tbinfo(request)
     return testbedinfo
 
@@ -665,6 +668,10 @@ def localhost(ansible_adhoc):
 
 
 @pytest.fixture(scope="session")
+def my_localhost(my_ansible_adhoc):
+    return Localhost(my_ansible_adhoc)
+
+@pytest.fixture(scope="session")
 def ptfhost(ptfhosts):
     if not ptfhosts:
         return ptfhosts
@@ -825,7 +832,6 @@ def fanouthosts(enhance_inventory, ansible_adhoc, conn_graph_facts, creds, dutho
     """
     Shortcut fixture for getting Fanout hosts
     """
-
     dev_conn = conn_graph_facts.get('device_conn', {})
     fanout_hosts = {}
     # WA for virtual testbed which has no fanout

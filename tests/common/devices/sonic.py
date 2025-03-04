@@ -84,6 +84,9 @@ class SonicHost(AnsibleHostBase):
             }
             self.host.options['variable_manager'].extra_vars.update(evars)
 
+        if "<sonic-fanout-hostname>" in hostname:
+            breakpoint()
+
         self._facts = self._gather_facts()
         self._os_version = self._get_os_version()
         if 'router_type' in self.facts and self.facts['router_type'] == 'spinerouter':
