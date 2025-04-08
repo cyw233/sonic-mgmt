@@ -204,7 +204,7 @@ def restore_default_syncd(duthost, creds, namespace=DEFAULT_NAMESPACE):
     )
 
     logger.info("Reloading config and restarting swss...")
-    config_reload(duthost)
+    config_reload(duthost, safe_reload=True, check_intf_up_ports=True)
 
     # Remove the RPC image from the duthost
     docker_rpc_image = docker_syncd_name + "-rpc"

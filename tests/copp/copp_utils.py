@@ -36,7 +36,9 @@ _SYNCD_NN_DEST = "/tmp/ptf_nn_agent.conf"
 _SYNCD_NN_FILE = "ptf_nn_agent.conf"
 
 _CONFIG_DB = "/etc/sonic/config_db.json"
+_ASIC_CONFIG_DB = "/etc/sonic/config_db{}.json"
 _TEMP_CONFIG_DB = "/home/admin/config_db_copp_backup.json"
+_TEMP_ASIC_CONFIG_DB = "/home/admin/config_db{}_copp_backup.json"
 
 
 def limit_policer(dut, pps_limit, nn_target_namespace):
@@ -333,6 +335,9 @@ EOF
 """ % (copp_trap_config_json, trap_id, always_enabled)
 
     dut.shell(cmd_copp_trap_always_enabled_config)
+    if dut.is_multi_asic:
+        copp_trap_config_json = ','.join([copp_trap_config_json] * (dut.num_asics() + 1))
+
     dut.command("sudo config load {} -y".format(copp_trap_config_json))
 
 
@@ -383,6 +388,12 @@ def backup_config_db(dut):
         dut (SonicHost): The target device
     """
     dut.command("sudo cp {} {}".format(_CONFIG_DB, _TEMP_CONFIG_DB))
+    if dut.is_multi_asic:
+        for asic_index in range(0, dut.num_asics()):
+            dut.command("sudo cp {} {}".format(
+                _ASIC_CONFIG_DB.format(asic_index),
+                _TEMP_ASIC_CONFIG_DB.format(asic_index),
+            ))
 
 
 def restore_config_db(dut):
@@ -393,7 +404,16 @@ def restore_config_db(dut):
     """
     dut.command("sudo cp {} {}".format(_TEMP_CONFIG_DB, _CONFIG_DB))
     dut.command("sudo rm -f {}".format(_TEMP_CONFIG_DB))
-    config_reload(dut)
+    if dut.is_multi_asic:
+        for asic_index in range(0, dut.num_asics()):
+            dut.command("sudo cp {} {}".format(
+                _TEMP_ASIC_CONFIG_DB.format(asic_index),
+                _ASIC_CONFIG_DB.format(asic_index),
+            ))
+
+            dut.command("sudo rm -f {}".format(_TEMP_ASIC_CONFIG_DB.format(asic_index)))
+
+    config_reload(dut, safe_reload=True, wait_for_bgp=True)
 
 
 def uninstall_trap(dut, feature_name, trap_id):

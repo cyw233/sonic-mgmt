@@ -164,7 +164,7 @@ class TestCOPP(object):
         4. Verify the trap status is uninstalled by sending traffic
         """
         duthost = duthosts[enum_rand_one_per_hwsku_frontend_hostname]
-        if (duthost.facts["asic_type"] == "cisco-8000"):
+        if duthost.facts["asic_type"] == "cisco-8000":
             logger.info("Sleep 120 seconds for Cisco platform")
             time.sleep(120)
 
@@ -536,12 +536,7 @@ def pre_condition_install_trap(ptfhost, duthost, copp_testbed, trap_id, feature_
 
 @pytest.fixture(autouse=False, scope="class")
 def check_image_version(duthosts, enum_rand_one_per_hwsku_frontend_hostname):
-    """Skips this test because new copp management logic works on 202012 branch and above
-
-    Args:
-        duthost: Hostname of DUT.
-
-    Returns:
-        None.
+    """
+        Skips this test because new copp management logic works on 202012 branch and above
     """
     skip_release(duthosts[enum_rand_one_per_hwsku_frontend_hostname], ["201911"])
