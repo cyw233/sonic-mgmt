@@ -33,7 +33,7 @@ def _ignore_allow_list_errlogs(duthosts, rand_one_dut_front_end_hostname, logana
         ]
         duthost = duthosts[rand_one_dut_front_end_hostname]
         """Cisco 8111-O64 has different allow list config"""
-        if duthost.facts['hwsku'] == 'Cisco-8111-O64':
+        if duthost.facts['hwsku'] in ['Cisco-8111-O64', 'Nokia-IXR7250E-36x100G', 'Arista-7808R3A-FM']:
             loganalyzer[rand_one_dut_front_end_hostname].ignore_regex.extend(IgnoreRegex)
     return
 
