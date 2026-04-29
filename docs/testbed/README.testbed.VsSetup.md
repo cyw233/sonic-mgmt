@@ -8,20 +8,12 @@ First, we need to prepare the host where we will be configuring the virtual test
     - To setup a T0 topology, the server needs to have at least 20GB of memory free
     - If the testbed host is a VM, then it must support nested virtualization
         - [Instructions for Hyper-V based VMs](https://docs.microsoft.com/en-us/virtualization/hyper-v-on-windows/user-guide/nested-virtualization#configure-nested-virtualization)
-2. Prepare your environment based on different Ubuntu versions, and make sure that python and pip are installed
-   1. Option: If your host is **Ubuntu 20.04**
+2. Prepare your environment on **Ubuntu 22.04** or **Ubuntu 24.04**, and make sure that Python and pip are installed:
 
-        ```
-        sudo apt install python3 python3-pip openssh-server
-        ```
-        If the server was upgraded from Ubuntu 18.04, check the default python version using command `python --version`. If the default python version is still 2.x, replace it with python3 using symbolic link:
-        ```
-        sudo ln -sf /usr/bin/python3 /usr/bin/python
-        ```
-   2. Option: If your host is **Ubuntu 18.04**
-        ```
-        sudo apt install python python-pip openssh-server
-        ```
+    ```
+    sudo apt update
+    sudo apt install -y python3 python3-pip openssh-server
+    ```
 
 3. Run the host setup script to install required packages and initialize the management bridge network
 
